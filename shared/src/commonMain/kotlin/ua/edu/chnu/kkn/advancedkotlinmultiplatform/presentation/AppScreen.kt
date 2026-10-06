@@ -69,18 +69,7 @@ fun App(
         ) {
             AppContent(
                 state = state,
-                onGet = {
-                    viewModel.onAction(AppAction.OnFetchPosts)
-                },
-                onPost = {
-                    viewModel.onAction(AppAction.OnCreatePost)
-                },
-                onPut = {
-                    viewModel.onAction(AppAction.OnUpdatePost)
-                },
-                onDelete = {
-                    viewModel.onAction(AppAction.OnDeletePost)
-                }
+                onAction = viewModel::onAction
             )
         }
     }
@@ -102,22 +91,27 @@ private fun showSnackbar(
 @Composable
 private fun AppContent(
     state: AppState,
-    onGet: () -> Unit,
-    onPost: () -> Unit,
-    onPut: () -> Unit,
-    onDelete: () -> Unit
+    onAction: (AppAction) -> Unit,
 ) {
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onAction(AppAction.OnLogin) }
+        ) {
+            Text("LOGIN")
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
 
             Button(
                 modifier = Modifier.weight(1F),
-                onClick = { onGet() }
+                onClick = { onAction(AppAction.OnFetchPosts) }
             ) {
                 Text("GET")
             }
@@ -126,7 +120,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
-                onClick = { onPost() }
+                onClick = { onAction(AppAction.OnCreatePost) }
             ) {
                 Text("POST")
             }
@@ -140,7 +134,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
-                onClick = { onPut() }
+                onClick = { onAction(AppAction.OnUpdatePost) }
             ) {
                 Text("PUT")
             }
@@ -149,7 +143,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
-                onClick = { onDelete() }
+                onClick = { onAction(AppAction.OnDeletePost) }
             ) {
                 Text("DELETE")
             }
@@ -191,5 +185,5 @@ private fun AppContent(
 @Preview
 @Composable
 private fun AppContentPreview() {
-    AppContent(AppState(), {}, {}, {}, {})
+    AppContent(AppState(), {})
 }

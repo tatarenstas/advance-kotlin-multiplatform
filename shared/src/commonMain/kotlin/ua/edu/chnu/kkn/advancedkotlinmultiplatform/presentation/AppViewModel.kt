@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.common.Result
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.common.onFailure
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.common.onSuccess
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.posts.model.requests.NewPost
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.posts.model.responses.Reactions
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.auth.login.LoginUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.create.CreatePostUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.edit.EditPostUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.obtain.ObtainPostsUseCase
@@ -29,6 +29,7 @@ class AppViewModel internal constructor(
     private val editPostUseCase: EditPostUseCase,
     private val obtainPostsUseCase: ObtainPostsUseCase,
     private val removePostUseCase: RemovePostUseCase,
+    private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AppState())
@@ -43,10 +44,24 @@ class AppViewModel internal constructor(
 
     fun onAction(action: AppAction) {
         when (action) {
+            AppAction.OnLogin -> login()
             AppAction.OnFetchPosts -> fetchPosts()
             AppAction.OnCreatePost -> createPost()
             AppAction.OnUpdatePost -> updatePost()
             AppAction.OnDeletePost -> deletePost()
+        }
+    }
+
+    private fun login() {
+        toggleProgressVisibility()
+        viewModelScope.launch {
+            delay(350.milliseconds)
+            loginUseCase("emilys", "emilyspass").onSuccess {
+                toggleProgressVisibility()
+            }.onFailure {
+                toggleProgressVisibility()
+                //TODO Handle login failure, e.g., show an error message
+            }
         }
     }
 
