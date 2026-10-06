@@ -25,10 +25,11 @@ internal inline fun <T> Result<T>.onFailure(action: (String) -> Unit): Result<T>
     return this
 }
 
+/** Transforms successful data while preserving a failure without running the transform. */
 internal inline fun <T, R> Result<T>.map(transform: (T) -> R): Result<R> {
     return when (this) {
         is Result.Success -> Result.Success(transform(data))
-        is Result.Failure -> Result.Failure(errorMessage)
+        is Result.Failure -> this
     }
 }
 //TODO investigate inline keyword, and Kotlin Generics, crossline keyword

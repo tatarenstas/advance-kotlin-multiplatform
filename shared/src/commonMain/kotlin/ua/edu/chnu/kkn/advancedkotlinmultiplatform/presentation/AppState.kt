@@ -8,5 +8,4 @@ internal data class AppState(
     val isProgressVisible: Boolean = false,
     val posts: List<Post> = emptyList(),
     val result: String? = null,
-    val error: String? = null,
 )

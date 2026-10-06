@@ -3,8 +3,8 @@ package ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +21,6 @@ import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.create.CreatePos
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.edit.EditPostUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.obtain.ObtainPostsUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.remove.RemovePostUseCase
-import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 class AppViewModel internal constructor(
@@ -29,9 +28,8 @@ class AppViewModel internal constructor(
     private val editPostUseCase: EditPostUseCase,
     private val obtainPostsUseCase: ObtainPostsUseCase,
     private val removePostUseCase: RemovePostUseCase,
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
-
     private val _state = MutableStateFlow(AppState())
     internal val state: StateFlow<AppState> = _state.asStateFlow()
 
@@ -39,125 +37,81 @@ class AppViewModel internal constructor(
     val events: Flow<AppEvent> = _events.receiveAsFlow()
 
     init {
-        fetchPosts()
+        onAction(AppAction.OnFetchPosts)
     }
 
     fun onAction(action: AppAction) {
-        when (action) {
-            AppAction.OnLogin -> login()
-            AppAction.OnFetchPosts -> fetchPosts()
-            AppAction.OnCreatePost -> createPost()
-            AppAction.OnUpdatePost -> updatePost()
-            AppAction.OnDeletePost -> deletePost()
-        }
-    }
+        if (_state.value.isProgressVisible) return
 
-    private fun login() {
-        toggleProgressVisibility()
+        _state.update { it.copy(isProgressVisible = true, result = null) }
         viewModelScope.launch {
-            delay(350.milliseconds)
-            loginUseCase("emilys", "emilyspass").onSuccess {
-                toggleProgressVisibility()
-            }.onFailure {
-                toggleProgressVisibility()
-                //TODO Handle login failure, e.g., show an error message
+            try {
+                when (action) {
+                    AppAction.OnLogin -> login()
+                    AppAction.OnFetchPosts -> fetchPosts()
+                    AppAction.OnCreatePost -> createPost()
+                    AppAction.OnUpdatePost -> updatePost()
+                    AppAction.OnDeletePost -> deletePost()
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                showError(e.message ?: "Unexpected error")
+            } finally {
+                _state.update { it.copy(isProgressVisible = false) }
             }
         }
     }
 
-    private fun fetchPosts() {
-        toggleProgressVisibility()
-        viewModelScope.launch {
-            resetPreviousResults()
-            delay(350.milliseconds)
-            obtainPostsUseCase()
-                .onSuccess { result ->
-                    _state.update {
-                        it.copy(
-                            posts = result.posts,
-                            result = result.toString()
-                        )
-                    }
-                }.onFailure { errorMessage ->
-                    _events.trySend(AppEvent.ShowGetErrorSnackbar(errorMessage))
-                }
-            toggleProgressVisibility()
+    private suspend fun login() {
+        loginUseCase("emilys", "emilyspass")
+            .onSuccess { _state.update { state -> state.copy(result = "Login successful") } }
+            .onFailure(::showError)
+    }
+
+    private suspend fun fetchPosts() {
+        obtainPostsUseCase()
+            .onSuccess { posts -> _state.update { it.copy(posts = posts.posts, result = posts.toString()) } }
+            .onFailure(::showError)
+    }
+
+    private suspend fun createPost() {
+        createPostUseCase(createNewPost())
+            .onSuccess { result -> _state.update { it.copy(result = result) } }
+            .onFailure(::showError)
+    }
+
+    private suspend fun updatePost() {
+        val post = _state.value.posts.firstOrNull()
+        if (post == null) {
+            showError("Fetch posts before updating one")
+            return
         }
+        editPostUseCase(post.copy(body = "Updated body"))
+            .onSuccess { result -> _state.update { it.copy(result = result) } }
+            .onFailure(::showError)
     }
 
-    private fun createPost() {
-        toggleProgressVisibility()
-        viewModelScope.launch {
-            resetPreviousResults()
-            createPostUseCase(createNewPost())
-                .onSuccess { result ->
-                    _state.update {
-                        it.copy(result = result)
-                    }
-                }.onFailure { errorMessage ->
-                    _events.trySend(AppEvent.ShowPostErrorSnackbar(errorMessage))
-
-                }
-            toggleProgressVisibility()
+    private suspend fun deletePost() {
+        val post = _state.value.posts.firstOrNull()
+        if (post == null) {
+            showError("Fetch posts before deleting one")
+            return
         }
+        removePostUseCase(post.id)
+            .onSuccess { result -> _state.update { it.copy(result = result) } }
+            .onFailure(::showError)
     }
 
-    private fun updatePost() {
-        toggleProgressVisibility()
-        viewModelScope.launch {
-            resetPreviousResults()
-            delay(350.milliseconds)
-            editPostUseCase(_state.value.posts.first().copy(body = "Updated body"))
-                .onSuccess { result ->
-                    _state.update {
-                        it.copy(
-                            result = result
-                        )
-                    }
-                }
-                .onFailure { errorMessage ->
-                    _events.trySend(AppEvent.ShowPutErrorSnackbar(errorMessage))
-                }
-            toggleProgressVisibility()
-        }
+    private fun showError(message: String) {
+        _events.trySend(AppEvent.ShowErrorSnackbar(message))
     }
 
-    private fun deletePost() {
-        toggleProgressVisibility()
-        viewModelScope.launch {
-            resetPreviousResults()
-            delay(350.milliseconds)
-            removePostUseCase(_state.value.posts.first().id)
-                .onSuccess { result ->
-                    _state.update {
-                        it.copy(
-                            result = result
-                        )
-                    }
-                }
-                .onFailure { errorMessage ->
-                    _events.trySend(AppEvent.ShowDeleteErrorSnackbar(errorMessage))
-                }
-            toggleProgressVisibility()
-        }
-    }
-
-    private fun toggleProgressVisibility() {
-        _state.update { it.copy(isProgressVisible = !it.isProgressVisible) }
-    }
-
-    private fun resetPreviousResults() {
-        _state.update { it.copy(result = null) }
-        _state.update { it.copy(error = null) }
-    }
-
-    private fun createNewPost(): NewPost {
-        return NewPost(
-            body = "Body text",
-            reactions = Reactions(),
-            tags = listOf("Tag 1", "Tag 2"),
-            title = "Title text",
-            userId = 5,
-        )
-    }
+    private fun createNewPost() = NewPost(
+        body = "Body text",
+        reactions = Reactions(),
+        tags = listOf("Tag 1", "Tag 2"),
+        title = "Title text",
+        userId = 5,
+    )
 }

@@ -24,7 +24,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,18 +45,9 @@ fun PostApiDemo(
 
         ObserveEvents(viewModel.events) { event ->
             when (event) {
-                is AppEvent.ShowDeleteErrorSnackbar -> {
-                    showSnackbar(coroutineScope, snackbarHostState, event.errorMessage)
-                }
-                is AppEvent.ShowGetErrorSnackbar -> {
-                    showSnackbar(coroutineScope, snackbarHostState, event.errorMessage)
-                }
-                is AppEvent.ShowPostErrorSnackbar -> {
-                    showSnackbar(coroutineScope, snackbarHostState, event.errorMessage)
-                }
-                is AppEvent.ShowPutErrorSnackbar -> {
-                    showSnackbar(coroutineScope, snackbarHostState, event.errorMessage)
-                }
+                is AppEvent.ShowErrorSnackbar -> showSnackbar(
+                    coroutineScope, snackbarHostState, event.message
+                )
             }
         }
 
@@ -105,6 +95,7 @@ private fun AppContent(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
+            enabled = !state.isProgressVisible,
             onClick = { onAction(AppAction.OnLogin) }
         ) {
             Text("LOGIN")
@@ -116,6 +107,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
+                enabled = !state.isProgressVisible,
                 onClick = { onAction(AppAction.OnFetchPosts) }
             ) {
                 Text("GET")
@@ -125,6 +117,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
+                enabled = !state.isProgressVisible,
                 onClick = { onAction(AppAction.OnCreatePost) }
             ) {
                 Text("POST")
@@ -139,7 +132,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
-                enabled = state.posts.isNotEmpty(),
+                enabled = !state.isProgressVisible && state.posts.isNotEmpty(),
                 onClick = { onAction(AppAction.OnUpdatePost) }
             ) {
                 Text("PUT")
@@ -149,7 +142,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
-                enabled = state.posts.isNotEmpty(),
+                enabled = !state.isProgressVisible && state.posts.isNotEmpty(),
                 onClick = { onAction(AppAction.OnDeletePost) }
             ) {
                 Text("DELETE")
@@ -175,17 +168,6 @@ private fun AppContent(
             )
         }
 
-        state.error?.let {
-            val scrollState = rememberScrollState()
-            Text(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState),
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color.Red,
-                text = it
-            )
-        }
     }
 }
 
