@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Daymark</string>
+    <string name="onboarding_label">Спокійний спосіб упоратися зі справами</string>
+    <string name="skip">Пропустити</string>
+    <string name="next">Далі</string>
+    <string name="get_started">Почати</string>
+    <string name="slide_1_kicker">01 / ЯСНІСТЬ</string>
+    <string name="slide_1_title">Звільни місце для важливого.</string>
+    <string name="slide_1_body">Збери справи в одному місці й починай кожен день із чіткого плану.</string>
+    <string name="slide_2_kicker">02 / ФОКУС</string>
+    <string name="slide_2_title">Крок за кроком.</string>
+    <string name="slide_2_body">Перетвори довгий список на кілька посильних справ. Відмічай зроблене.</string>
+    <string name="slide_3_kicker">03 / РУХ УПЕРЕД</string>
+    <string name="slide_3_title">Помічай свій поступ.</string>
+    <string name="slide_3_body">Простий огляд допоможе знайти власний ритм і тішитися результатом.</string>
+    <string name="slide_4_kicker">04 / ТВІЙ ДЕНЬ</string>
+    <string name="slide_4_title">Твій день починається тут.</string>
+    <string name="slide_4_body">Готовий почати з чистого аркуша? Твій простір уже чекає.</string>
+    <string name="your_day">Твій день</string>
+    <string name="home_heading">Маленькі кроки ведуть уперед.</string>
+    <string name="home_subtitle">Попередній перегляд простору для справ</string>
+    <string name="today">СЬОГОДНІ</string>
+    <string name="tasks_done">Виконано %1$d із %2$d</string>
+    <string name="demo_task_1">Спланувати тиждень</string>
+    <string name="demo_task_2">Зробити коротку перерву</string>
+    <string name="demo_task_3">Записати одну хорошу ідею</string>
+    <string name="appearance">Вигляд</string>
+    <string name="dark_mode">Темна тема</string>
+    <string name="replay_intro">Переглянути вступ знову</string>
+    <string name="api_demo">Відкрити попередній API-приклад</string>
+    <string name="back_to_tasks">Назад до справ</string>
+    <string name="preview_note">Справи наведено як приклад для цієї вступної роботи.</string>
+</resources>

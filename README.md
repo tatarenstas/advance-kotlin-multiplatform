@@ -1,3 +1,11 @@
+# Daymark — Kotlin Multiplatform lab 4
+
+Daymark is a task-list concept built in the existing Kotlin Multiplatform project. This lab adds a four-page swipeable introduction with a custom Compose theme, English and Ukrainian text, and persistent user preferences. The task list shown after onboarding is a UI preview; the REST-backed task workflow is for later labs. The earlier posts API exercise remains available through **Open previous API demo**.
+
+The introduction can be swiped or advanced with the button. **Skip** and **Get started** save completion through `multiplatform-settings`, so it appears only on first launch. **View introduction again** reopens it. The appearance switch also persists. Language follows the device or browser locale; English is the fallback and Ukrainian is supplied in `composeResources/values-uk`.
+
+The theme uses Literata and Manrope from [Google Fonts](https://github.com/google/fonts), bundled under the SIL Open Font License. Both support Ukrainian. Their license files are in `shared/src/commonMain/composeResources/font`. Kermit logs onboarding completion and Ktor network messages without token values.
+
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
 
 * [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,

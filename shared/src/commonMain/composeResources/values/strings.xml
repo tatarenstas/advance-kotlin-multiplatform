@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Daymark</string>
+    <string name="onboarding_label">A calmer way to get things done</string>
+    <string name="skip">Skip</string>
+    <string name="next">Continue</string>
+    <string name="get_started">Get started</string>
+    <string name="slide_1_kicker">01 / CLARITY</string>
+    <string name="slide_1_title">Make room for what matters.</string>
+    <string name="slide_1_body">Keep your tasks in one quiet place and give every day a clear beginning.</string>
+    <string name="slide_2_kicker">02 / FOCUS</string>
+    <string name="slide_2_title">One small step at a time.</string>
+    <string name="slide_2_body">Turn a long list into a few doable moments. Check things off as you go.</string>
+    <string name="slide_3_kicker">03 / MOMENTUM</string>
+    <string name="slide_3_title">See how far you have come.</string>
+    <string name="slide_3_body">A simple overview helps you find your rhythm and celebrate progress.</string>
+    <string name="slide_4_kicker">04 / YOUR DAY</string>
+    <string name="slide_4_title">Today starts here.</string>
+    <string name="slide_4_body">Ready for a fresh start? Your space is waiting.</string>
+    <string name="your_day">Your day</string>
+    <string name="home_heading">A little progress adds up.</string>
+    <string name="home_subtitle">A preview of your task space</string>
+    <string name="today">TODAY</string>
+    <string name="tasks_done">%1$d of %2$d complete</string>
+    <string name="demo_task_1">Plan the week</string>
+    <string name="demo_task_2">Take a short break</string>
+    <string name="demo_task_3">Write down one good idea</string>
+    <string name="appearance">Appearance</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="replay_intro">View introduction again</string>
+    <string name="api_demo">Open previous API demo</string>
+    <string name="back_to_tasks">Back to tasks</string>
+    <string name="preview_note">Task data is a preview for this introduction exercise.</string>
+</resources>
