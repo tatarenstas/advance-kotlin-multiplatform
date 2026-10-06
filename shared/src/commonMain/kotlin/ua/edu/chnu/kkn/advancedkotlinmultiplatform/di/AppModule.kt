@@ -10,6 +10,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.json
+import com.russhwolf.settings.Settings
 import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -36,6 +37,7 @@ import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.edit.EditPostUse
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.obtain.ObtainPostsUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.remove.RemovePostUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.AppViewModel
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.UserPreferences
 
 val secureModule = module {
     includes(platformModule)
@@ -48,10 +50,10 @@ val networkModule = module {
         val secureStorage: SecureStorage = get()
         HttpClient {
             install(Logging) {
-                level = LogLevel.ALL
+                level = LogLevel.INFO
                 logger = object : Logger {
                     override fun log(message: String) {
-                        println("KtorLogger: $message")
+                        co.touchlab.kermit.Logger.withTag("Ktor").d { message }
                     }
                 }
             }
@@ -99,6 +101,8 @@ val networkModule = module {
 }
 val appModule = module {
     includes(networkModule, platformModule)
+    single<Settings> { Settings() }
+    singleOf(::UserPreferences)
     singleOf(::AppPostRepository) { bind<PostRepository>() }
     factoryOf(::LoginUseCase)
     factoryOf(::CreatePostUseCase)

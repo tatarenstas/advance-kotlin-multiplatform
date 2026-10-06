@@ -16,7 +16,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
@@ -32,7 +34,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.ui.ObserveEvents
 
 @Composable
-fun App(
+fun PostApiDemo(
     viewModel: AppViewModel = koinViewModel(),
 ) {
     MaterialTheme {
@@ -59,18 +61,21 @@ fun App(
             }
         }
 
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .systemBarsPadding()
-                .padding(16.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            AppContent(
-                state = state,
-                onAction = viewModel::onAction
-            )
+        Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { contentPadding ->
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .systemBarsPadding()
+                    .padding(contentPadding)
+                    .padding(16.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                AppContent(
+                    state = state,
+                    onAction = viewModel::onAction
+                )
+            }
         }
     }
 }
@@ -134,6 +139,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
+                enabled = state.posts.isNotEmpty(),
                 onClick = { onAction(AppAction.OnUpdatePost) }
             ) {
                 Text("PUT")
@@ -143,6 +149,7 @@ private fun AppContent(
 
             Button(
                 modifier = Modifier.weight(1F),
+                enabled = state.posts.isNotEmpty(),
                 onClick = { onAction(AppAction.OnDeletePost) }
             ) {
                 Text("DELETE")

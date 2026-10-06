@@ -9,7 +9,7 @@ fun main() = application {
     initKoin { printLogger() }
     Window(
         onCloseRequest = ::exitApplication,
-        title = "AdvancedKotlinMultiplatform",
+        title = "Daymark",
     ) {
         App()
     }

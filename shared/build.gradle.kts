@@ -10,6 +10,10 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
+compose.resources {
+    packageOfResClass = "ua.edu.chnu.kkn.advancedkotlinmultiplatform.resources"
+}
+
 kotlin {
     listOf(
         iosArm64(),
@@ -73,10 +77,12 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.ksafe)
             implementation(libs.kermit)
+            implementation(libs.multiplatform.settings.no.arg)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.koin.test)
+            implementation(libs.multiplatform.settings.test)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)
