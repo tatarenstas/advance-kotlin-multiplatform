@@ -6,17 +6,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.savedstate.serialization.SavedStateConfiguration
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App() {
     val startViewModel: StartViewModel = koinViewModel()
     val startRoute by startViewModel.route.collectAsStateWithLifecycle()
-    val backStack = rememberNavBackStack(SavedStateConfiguration { }, AppRoute.Loading)
+    val backStack = remember { NavBackStack<NavKey>(AppRoute.Loading) }
 
     LaunchedEffect(startRoute) {
         if (startRoute != AppRoute.Loading) {
@@ -40,7 +40,10 @@ fun App() {
                 AppRoute.Onboarding -> OnboardingScreen(
                     onFinish = { navigateTo(AppRoute.SignIn) },
                 )
-                AppRoute.SignIn -> AuthScreen()
+                AppRoute.SignIn -> AuthScreen(
+                    onAuthenticated = { navigateTo(AppRoute.Home) },
+                )
+                AppRoute.Home -> SignedInHomeScreen()
             }
         }
     }

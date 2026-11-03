@@ -8,6 +8,10 @@ This `lab-3-mvi` branch continues the completed lab 4 pager. The previous post A
 
 Navigation 3 owns a KMP `NavBackStack` for the startup flow. `StartViewModel` uses `HasCompletedOnboardingUseCase` to choose onboarding or the sign-in route. `OnboardingViewModel` completes onboarding through a use case and `SettingsOnboardingRepository`, which stores the result in `multiplatform-settings`. The sign-in form has its own MVI state, validates both fields, and supports the expected IME actions: Next focuses the password and Done submits the form. Network sign-in is added in lab 6.
 
+## Lab 6: network authentication
+
+The sign-in MVI uses `LoginUseCase`, `AppAuthRepository`, and the Ktor `AuthApiService`. KSafe stores access and refresh tokens on each platform. Ktor's bearer plugin reloads stored tokens and, after an unauthorized response, calls the refresh endpoint, rotates the stored tokens, and retries the original request. A successful sign-in goes to the home route; a failed sign-in emits an `AuthEvent` that the screen presents in a snackbar.
+
 Daymark is a task-list concept built in the existing Kotlin Multiplatform project. This lab adds a four-page swipeable introduction with a custom Compose theme, English and Ukrainian text, and persistent user preferences. The task list shown after onboarding is a UI preview; the REST-backed task workflow is for later labs. The earlier posts API exercise remains available through **Open previous API demo**.
 
 The introduction can be swiped or advanced with the button. **Skip** and **Get started** save completion through `multiplatform-settings`, so it appears only on first launch. **View introduction again** reopens it. The appearance switch also persists. Language follows the device or browser locale; English is the fallback and Ukrainian is supplied in `composeResources/values-uk`.

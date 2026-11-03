@@ -32,6 +32,7 @@ import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.security.AppSecureStorag
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.security.SecureStorage
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.auth.AuthRepository
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.auth.login.LoginUseCase
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.auth.session.IsAuthenticatedUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.onboarding.CompleteOnboardingUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.onboarding.HasCompletedOnboardingUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.onboarding.OnboardingRepository
@@ -69,6 +70,7 @@ val networkModule = module {
                     prettyPrint = true
                     isLenient = true
                     ignoreUnknownKeys = true
+                    encodeDefaults = true
                 })
             }
             install(Auth) {
@@ -113,6 +115,7 @@ val appModule = module {
     singleOf(::SettingsOnboardingRepository) { bind<OnboardingRepository>() }
     singleOf(::AppPostRepository) { bind<PostRepository>() }
     factoryOf(::LoginUseCase)
+    factoryOf(::IsAuthenticatedUseCase)
     factoryOf(::CompleteOnboardingUseCase)
     factoryOf(::HasCompletedOnboardingUseCase)
     factoryOf(::CreatePostUseCase)

@@ -46,6 +46,7 @@ import ua.edu.chnu.kkn.advancedkotlinmultiplatform.resources.username_label
 
 @Composable
 internal fun AuthScreen(
+    onAuthenticated: () -> Unit,
     viewModel: AuthViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -55,7 +56,8 @@ internal fun AuthScreen(
 
     ObserveEvents(viewModel.events) { event ->
         when (event) {
-            AuthEvent.FormValidated -> scope.launch { snackbar.showSnackbar("Form is valid") }
+            AuthEvent.Authenticated -> onAuthenticated()
+            is AuthEvent.ShowError -> scope.launch { snackbar.showSnackbar(event.message) }
         }
     }
 

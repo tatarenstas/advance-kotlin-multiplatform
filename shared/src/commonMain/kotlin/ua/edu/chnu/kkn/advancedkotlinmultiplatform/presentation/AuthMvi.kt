@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.common.onFailure
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.common.onSuccess
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.auth.login.LoginUseCase
 
 internal data class AuthState(
     val username: String = "",
@@ -26,10 +29,13 @@ internal sealed interface AuthAction {
 }
 
 internal sealed interface AuthEvent {
-    data object FormValidated : AuthEvent
+    data object Authenticated : AuthEvent
+    data class ShowError(val message: String) : AuthEvent
 }
 
-internal class AuthViewModel : ViewModel() {
+internal class AuthViewModel(
+    private val login: LoginUseCase,
+) : ViewModel() {
     private val _state = MutableStateFlow(AuthState())
     val state: StateFlow<AuthState> = _state.asStateFlow()
 
@@ -61,6 +67,12 @@ internal class AuthViewModel : ViewModel() {
             return
         }
 
-        viewModelScope.launch { _events.send(AuthEvent.FormValidated) }
+        _state.update { it.copy(isLoading = true) }
+        viewModelScope.launch {
+            login(current.username.trim(), current.password)
+                .onSuccess { _events.send(AuthEvent.Authenticated) }
+                .onFailure { _events.send(AuthEvent.ShowError(it)) }
+            _state.update { it.copy(isLoading = false) }
+        }
     }
 }

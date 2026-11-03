@@ -26,4 +26,6 @@ internal class AppAuthRepository(
     override suspend fun refresh(refreshToken: String): Result<RefreshResponse> {
         return authApiService.refresh(refreshToken)
     }
+
+    override suspend fun isAuthenticated(): Boolean = secureStorage.getAccessToken().isNotBlank()
 }

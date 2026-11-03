@@ -6,4 +6,5 @@ internal sealed class AppRoute : NavKey {
     data object Loading : AppRoute()
     data object Onboarding : AppRoute()
     data object SignIn : AppRoute()
+    data object Home : AppRoute()
 }

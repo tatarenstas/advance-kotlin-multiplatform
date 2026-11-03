@@ -4,7 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.plugins.auth.authProvider
 import io.ktor.client.plugins.auth.providers.BearerAuthProvider
 import io.ktor.client.request.accept
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -38,8 +37,9 @@ internal class AppAuthApiService(
 
     override suspend fun refresh(refreshToken: String): Result<RefreshResponse> {
         return client.safeRequest {
-            get("$BASE_URL$AUTH$REFRESH") {
+            post("$BASE_URL$AUTH$REFRESH") {
                 accept(ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
                 setBody(RefreshRequest(refreshToken))
             }
         }
