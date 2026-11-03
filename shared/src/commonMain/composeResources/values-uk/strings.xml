@@ -30,4 +30,12 @@
     <string name="api_demo">Відкрити попередній API-приклад</string>
     <string name="back_to_tasks">Назад до справ</string>
     <string name="preview_note">Справи наведено як приклад для цієї вступної роботи.</string>
+    <string name="auth_caption">ОБЛІКОВИЙ ЗАПИС DAYMARK</string>
+    <string name="auth_title">З поверненням.</string>
+    <string name="auth_hint">Увійди, щоб продовжити до власного простору.</string>
+    <string name="username_label">Ім’я користувача</string>
+    <string name="password_label">Пароль</string>
+    <string name="sign_in">Увійти</string>
+    <string name="home_signed_in_title">Ти увійшов у застосунок.</string>
+    <string name="home_signed_in_body">Твоя домашня сторінка Daymark готова.</string>
 </resources>

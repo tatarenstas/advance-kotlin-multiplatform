@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.compose.viewmodel.koinViewModel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.resources.Res
@@ -60,6 +63,7 @@ import ua.edu.chnu.kkn.advancedkotlinmultiplatform.resources.slide_3_title
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.resources.slide_4_body
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.resources.slide_4_kicker
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.resources.slide_4_title
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.ui.ObserveEvents
 
 private data class Slide(
     val kicker: StringResource,
@@ -76,9 +80,17 @@ private val slides = listOf(
 )
 
 @Composable
-internal fun OnboardingScreen(onFinish: () -> Unit) {
+internal fun OnboardingScreen(
+    onFinish: () -> Unit,
+    viewModel: OnboardingViewModel = koinViewModel(),
+) {
     val pagerState = rememberPagerState(pageCount = { slides.size })
     val scope = rememberCoroutineScope()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ObserveEvents(viewModel.events) { event ->
+        if (event == OnboardingEvent.Completed) onFinish()
+    }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
@@ -106,7 +118,10 @@ internal fun OnboardingScreen(onFinish: () -> Unit) {
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.66f),
                     )
                 }
-                TextButton(onClick = onFinish) {
+                TextButton(
+                    onClick = { viewModel.onAction(OnboardingAction.Complete) },
+                    enabled = !state.isCompleting,
+                ) {
                     Text(stringResource(Res.string.skip))
                 }
             }
@@ -170,10 +185,13 @@ internal fun OnboardingScreen(onFinish: () -> Unit) {
             }
             Button(
                 onClick = {
-                    if (pagerState.currentPage == slides.lastIndex) onFinish()
+                    if (pagerState.currentPage == slides.lastIndex) {
+                        viewModel.onAction(OnboardingAction.Complete)
+                    }
                     else scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
+                enabled = !state.isCompleting,
                 shape = RoundedCornerShape(18.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,

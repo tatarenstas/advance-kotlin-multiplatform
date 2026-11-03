@@ -16,6 +16,7 @@ kotlin-wrappers = "2026.5.3"
 kotlinx-coroutines = "1.11.0"
 ksafe = "3.2.0"
 material3 = "1.11.0-alpha07"
+navigation3 = "1.2.0"
 koin = "4.2.1"
 koin-plugin = "1.0.0"
 ktor = "3.5.0"
@@ -40,6 +41,8 @@ compose-material3 = { module = "org.jetbrains.compose.material3:material3", vers
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
+navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
+navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 ksafe = { module = "eu.anifantakis:ksafe", version.ref = "ksafe" }
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }

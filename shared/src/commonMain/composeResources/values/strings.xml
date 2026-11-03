@@ -30,4 +30,12 @@
     <string name="api_demo">Open previous API demo</string>
     <string name="back_to_tasks">Back to tasks</string>
     <string name="preview_note">Task data is a preview for this introduction exercise.</string>
+    <string name="auth_caption">DAYMARK ACCOUNT</string>
+    <string name="auth_title">Welcome back.</string>
+    <string name="auth_hint">Sign in to continue to your personal space.</string>
+    <string name="username_label">Username</string>
+    <string name="password_label">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="home_signed_in_title">You are signed in.</string>
+    <string name="home_signed_in_body">Your Daymark home is ready.</string>
 </resources>

@@ -4,6 +4,10 @@
 
 This `lab-3-mvi` branch continues the completed lab 4 pager. The previous post API demo now follows MVI: `AppAction` represents user intent, `AppViewModel` processes one action at a time and publishes immutable `AppState`, while `AppEvent` delivers one-time snackbar errors. The ViewModel calls domain use cases instead of API services directly. `Result.map` transforms successful API results and preserves failures; `ResultMapTest` verifies both cases.
 
+## Lab 5: onboarding and authentication UI
+
+Navigation 3 owns a KMP `NavBackStack` for the startup flow. `StartViewModel` uses `HasCompletedOnboardingUseCase` to choose onboarding or the sign-in route. `OnboardingViewModel` completes onboarding through a use case and `SettingsOnboardingRepository`, which stores the result in `multiplatform-settings`. The sign-in form has its own MVI state, validates both fields, and supports the expected IME actions: Next focuses the password and Done submits the form. Network sign-in is added in lab 6.
+
 Daymark is a task-list concept built in the existing Kotlin Multiplatform project. This lab adds a four-page swipeable introduction with a custom Compose theme, English and Ukrainian text, and persistent user preferences. The task list shown after onboarding is a UI preview; the REST-backed task workflow is for later labs. The earlier posts API exercise remains available through **Open previous API demo**.
 
 The introduction can be swiped or advanced with the button. **Skip** and **Get started** save completion through `multiplatform-settings`, so it appears only on first launch. **View introduction again** reopens it. The appearance switch also persists. Language follows the device or browser locale; English is the fallback and Ukrainian is supplied in `composeResources/values-uk`.

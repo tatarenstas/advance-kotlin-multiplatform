@@ -1,51 +1,57 @@
 package ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import co.touchlab.kermit.Logger
-import org.koin.compose.koinInject
+import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.savedstate.serialization.SavedStateConfiguration
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App() {
-    val preferences: UserPreferences = koinInject()
-    var showOnboarding by remember { mutableStateOf(!preferences.hasSeenOnboarding) }
-    var useDarkTheme by remember { mutableStateOf(preferences.useDarkTheme) }
-    var showApiDemo by remember { mutableStateOf(false) }
+    val startViewModel: StartViewModel = koinViewModel()
+    val startRoute by startViewModel.route.collectAsStateWithLifecycle()
+    val backStack = rememberNavBackStack(SavedStateConfiguration { }, AppRoute.Loading)
 
-    DaymarkTheme(useDarkTheme) {
+    LaunchedEffect(startRoute) {
+        if (startRoute != AppRoute.Loading) {
+            backStack.clear()
+            backStack.add(startRoute)
+        }
+    }
+
+    fun navigateTo(route: AppRoute) {
+        backStack.clear()
+        backStack.add(route)
+    }
+
+    DaymarkTheme(darkTheme = false) {
         Surface(
             modifier = androidx.compose.ui.Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background,
         ) {
-            when {
-                showOnboarding -> OnboardingScreen(
-                    onFinish = {
-                        preferences.hasSeenOnboarding = true
-                        showOnboarding = false
-                        Logger.withTag("Daymark").i { "Onboarding completed" }
-                    },
+            when (backStack.lastOrNull() as? AppRoute ?: AppRoute.Loading) {
+                AppRoute.Loading -> AppLoadingScreen()
+                AppRoute.Onboarding -> OnboardingScreen(
+                    onFinish = { navigateTo(AppRoute.SignIn) },
                 )
-                showApiDemo -> Column {
-                    ApiDemoBackButton { showApiDemo = false }
-                    PostApiDemo()
-                }
-                else -> TodoHomeScreen(
-                    useDarkTheme = useDarkTheme,
-                    onDarkThemeChange = {
-                        preferences.useDarkTheme = it
-                        useDarkTheme = it
-                    },
-                    onReplayIntro = { showOnboarding = true },
-                    onOpenApiDemo = { showApiDemo = true },
-                )
+                AppRoute.SignIn -> AuthScreen()
             }
         }
+    }
+}
+
+@Composable
+private fun AppLoadingScreen() {
+    androidx.compose.foundation.layout.Box(
+        modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+        contentAlignment = androidx.compose.ui.Alignment.Center,
+    ) {
+        androidx.compose.material3.CircularProgressIndicator()
     }
 }

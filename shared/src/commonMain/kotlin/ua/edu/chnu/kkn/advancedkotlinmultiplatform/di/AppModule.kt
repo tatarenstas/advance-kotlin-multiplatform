@@ -27,10 +27,14 @@ import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.common.onSuccess
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.posts.service.AppPostApiService
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.posts.service.PostApiService
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.posts.AppPostRepository
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.onboarding.SettingsOnboardingRepository
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.security.AppSecureStorage
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.data.security.SecureStorage
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.auth.AuthRepository
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.auth.login.LoginUseCase
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.onboarding.CompleteOnboardingUseCase
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.onboarding.HasCompletedOnboardingUseCase
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.onboarding.OnboardingRepository
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.PostRepository
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.create.CreatePostUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.edit.EditPostUseCase
@@ -38,6 +42,9 @@ import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.obtain.ObtainPos
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.domain.posts.remove.RemovePostUseCase
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.AppViewModel
 import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.UserPreferences
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.AuthViewModel
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.OnboardingViewModel
+import ua.edu.chnu.kkn.advancedkotlinmultiplatform.presentation.StartViewModel
 
 val secureModule = module {
     includes(platformModule)
@@ -103,11 +110,17 @@ val appModule = module {
     includes(networkModule, platformModule)
     single<Settings> { Settings() }
     singleOf(::UserPreferences)
+    singleOf(::SettingsOnboardingRepository) { bind<OnboardingRepository>() }
     singleOf(::AppPostRepository) { bind<PostRepository>() }
     factoryOf(::LoginUseCase)
+    factoryOf(::CompleteOnboardingUseCase)
+    factoryOf(::HasCompletedOnboardingUseCase)
     factoryOf(::CreatePostUseCase)
     factoryOf(::EditPostUseCase)
     factoryOf(::ObtainPostsUseCase)
     factoryOf(::RemovePostUseCase)
     viewModelOf(::AppViewModel)
+    viewModelOf(::OnboardingViewModel)
+    viewModelOf(::AuthViewModel)
+    viewModelOf(::StartViewModel)
 }
